@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Photo</title>
+</head>
+<body>
+  <h1>Upload Your Wedding Photo</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label for="photo">Choose a photo:</label>
+    <input type="file" id="photo" name="photo" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <div id="uploadMessage"></div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const uploadMessage = document.getElementById("uploadMessage");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch("http://localhost:3000/api/photos/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          uploadMessage.innerHTML = `Upload successful! <br>File URL: <a href="${data.fileUrl}">${data.fileUrl}</a>`;
+        } else {
+          uploadMessage.innerHTML = "Upload failed. Please try again.";
+        }
+      } catch (error) {
+        console.error("Error during upload:", error);
+        uploadMessage.innerHTML = "An error occurred during upload.";
+      }
+    });
+  </script>
+</body>
+</html>
